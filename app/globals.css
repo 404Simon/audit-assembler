@@ -7,6 +7,15 @@
 @theme inline {
     --font-heading: var(--font-sans);
     --font-sans: var(--font-sans);
+    --color-brand: var(--brand);
+    --color-brand-muted: var(--brand-muted);
+    --color-cat-missing: var(--cat-missing);
+    --color-cat-bug: var(--cat-bug);
+    --color-cat-difference: var(--cat-difference);
+    --color-cat-methodology: var(--cat-methodology);
+    --color-severity-high: var(--severity-high);
+    --color-severity-medium: var(--severity-medium);
+    --color-severity-low: var(--severity-low);
     --color-sidebar-ring: var(--sidebar-ring);
     --color-sidebar-border: var(--sidebar-border);
     --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -72,6 +81,15 @@
     --chart-4: oklch(0.371 0 0);
     --chart-5: oklch(0.269 0 0);
     --radius: 0.625rem;
+    --brand: oklch(0.546 0.245 262.881);
+    --brand-muted: oklch(0.97 0.014 254.604);
+    --cat-missing: oklch(0.5 0.134 242.749);
+    --cat-bug: oklch(0.505 0.213 27.518);
+    --cat-difference: oklch(0.555 0.163 48.998);
+    --cat-methodology: oklch(0.491 0.27 292.581);
+    --severity-high: oklch(0.505 0.213 27.518);
+    --severity-medium: oklch(0.555 0.163 48.998);
+    --severity-low: oklch(0.508 0.118 165.612);
     --sidebar: oklch(0.985 0 0);
     --sidebar-foreground: oklch(0.145 0 0);
     --sidebar-primary: oklch(0.205 0 0);
@@ -106,6 +124,15 @@
     --chart-3: oklch(0.439 0 0);
     --chart-4: oklch(0.371 0 0);
     --chart-5: oklch(0.269 0 0);
+    --brand: oklch(0.707 0.165 254.624);
+    --brand-muted: oklch(0.28 0.04 257);
+    --cat-missing: oklch(0.746 0.16 232.661);
+    --cat-bug: oklch(0.712 0.194 13.428);
+    --cat-difference: oklch(0.828 0.189 84.429);
+    --cat-methodology: oklch(0.702 0.183 293.541);
+    --severity-high: oklch(0.712 0.194 13.428);
+    --severity-medium: oklch(0.828 0.189 84.429);
+    --severity-low: oklch(0.765 0.177 163.223);
     --sidebar: oklch(0.205 0 0);
     --sidebar-foreground: oklch(0.985 0 0);
     --sidebar-primary: oklch(0.488 0.243 264.376);
@@ -126,4 +153,18 @@
   html {
     @apply font-sans;
     }
+}
+@utility bg-grid {
+  background-image:
+    linear-gradient(to right, color-mix(in oklch, var(--foreground) 6%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in oklch, var(--foreground) 6%, transparent) 1px, transparent 1px);
+  background-size: 3rem 3rem;
+}
+
+@utility bg-dots {
+  background-image: radial-gradient(
+    color-mix(in oklch, var(--foreground) 12%, transparent) 1px,
+    transparent 1px
+  );
+  background-size: 1rem 1rem;
 }
