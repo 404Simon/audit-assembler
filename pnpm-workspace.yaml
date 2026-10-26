@@ -1,5 +1,8 @@
 packages: []
 
+# Minimum package age before install: 3 days (in minutes)
+minimumReleaseAge: 4320
+
 allowBuilds:
   sharp: true
   unrs-resolver: true
