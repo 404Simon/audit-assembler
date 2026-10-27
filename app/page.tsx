@@ -128,9 +128,7 @@ export default function GuidePage() {
                   <CardTitle>You send</CardTitle>
                 </CardHeader>
                 <CardContent className="text-sm leading-relaxed text-muted-foreground">
-                  <code>audit.md</code> from the editor, plus the scripts and
-                  outputs you used in a <code>checks/</code> folder. Submission
-                  details will be on StudOn.
+                  <code>audit.md</code> from the editor (on this webpage), plus scripts and outputs you wrote in a <code>checks/</code> folder. Submission details will be on StudOn.
                 </CardContent>
               </Card>
             </div>
