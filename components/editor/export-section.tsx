@@ -12,7 +12,6 @@ import {
   UploadIcon,
 } from "lucide-react"
 
-import { CopyButton } from "@/components/audit/copy-button"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import {
   AlertDialog,
@@ -257,7 +256,6 @@ export function ExportSection({
           </CardDescription>
           <CardAction>
             <div className="flex items-center gap-2">
-              <CopyButton value={markdown} label="Copy Markdown" />
               <Button
                 onClick={() =>
                   downloadTextFile(

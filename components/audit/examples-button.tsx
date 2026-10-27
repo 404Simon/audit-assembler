@@ -4,7 +4,6 @@ import * as React from "react"
 import Link from "next/link"
 import { ArrowUpRightIcon, SparklesIcon } from "lucide-react"
 
-import { CopyButton } from "@/components/audit/copy-button"
 import { Badge } from "@/components/ui/badge"
 import { Button, buttonVariants } from "@/components/ui/button"
 import {
@@ -67,7 +66,7 @@ export function ExamplesButton({
           <DialogHeader>
             <DialogTitle>Examples — {title}</DialogTitle>
             <DialogDescription>
-              Concrete excerpts from held-out NeurIPS 2025 audits. Copy the
+              Concrete excerpts from held-out NeurIPS 2025 audits. Match the
               shape and level of detail, never the content: your report must
               describe your own paper.
             </DialogDescription>
@@ -94,15 +93,11 @@ export function ExamplesButton({
                         <span className="min-w-0 flex-1 truncate text-xs text-muted-foreground">
                           {item.source.paper}
                         </span>
-                        <CopyButton value={item.text} label="Copy" />
                       </div>
                     ) : (
-                      <div className="flex items-center justify-between gap-2">
-                        <span className="text-xs text-muted-foreground">
-                          Short example
-                        </span>
-                        <CopyButton value={item.text} label="Copy" />
-                      </div>
+                      <span className="text-xs text-muted-foreground">
+                        Short example
+                      </span>
                     )}
                     {item.context ? (
                       <p className="text-xs text-muted-foreground">

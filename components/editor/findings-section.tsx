@@ -13,7 +13,6 @@ import {
   TriangleAlertIcon,
 } from "lucide-react"
 
-import { CopyButton } from "@/components/audit/copy-button"
 import { FormField, SegmentedField, SelectField } from "@/components/audit/form"
 import {
   CategoryBadge,
@@ -837,11 +836,10 @@ function FindingCard({
                 </button>
                 {showYaml ? (
                   <div className="border-t">
-                    <div className="flex items-center justify-between gap-2 border-b bg-muted/30 px-3 py-1.5">
+                    <div className="border-b bg-muted/30 px-3 py-1.5">
                       <span className="text-xs text-muted-foreground">
                         This block is written into your audit.md.
                       </span>
-                      <CopyButton value={yaml} label="Copy YAML" />
                     </div>
                     <pre className="max-h-80 w-full max-w-full overflow-auto p-3 font-mono text-xs leading-relaxed">
                       {yaml}
