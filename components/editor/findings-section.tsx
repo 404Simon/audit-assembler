@@ -5,7 +5,6 @@ import Link from "next/link"
 import {
   ArrowDownIcon,
   ArrowUpIcon,
-  BracesIcon,
   ChevronDownIcon,
   CopyPlusIcon,
   PlusIcon,
@@ -67,7 +66,6 @@ import {
   type Finding,
   type FindingCategory,
 } from "@/lib/audit/types"
-import { buildFindingYaml } from "@/lib/audit/export"
 import type { Issue } from "@/lib/audit/validation"
 
 import { issuesForFinding } from "./utils"
@@ -310,7 +308,6 @@ function FindingCard({
   const { updateFinding, removeFinding, duplicateFinding, moveFinding } =
     useAudit()
   const [confirmDelete, setConfirmDelete] = React.useState(false)
-  const [showYaml, setShowYaml] = React.useState(false)
 
   const errors = showErrors
     ? issues.filter((issue) => issue.level === "error")
@@ -318,7 +315,6 @@ function FindingCard({
   const warnings = showErrors
     ? issues.filter((issue) => issue.level === "warning")
     : []
-  const yaml = React.useMemo(() => buildFindingYaml(finding), [finding])
   const codeFile = isCodeFile(finding.file)
   const urlFile = isUrl(finding.file)
 
@@ -814,39 +810,6 @@ function FindingCard({
                   ))}
                 </FieldGroup>
               </FieldSet>
-
-              <div className="rounded-xl border">
-                <button
-                  type="button"
-                  onClick={() => setShowYaml((current) => !current)}
-                  className="flex w-full items-center gap-2 px-3 py-2.5 text-left text-sm font-medium hover:bg-muted/50"
-                >
-                  <BracesIcon className="size-4 text-muted-foreground" />
-                  YAML preview
-                  <span className="ml-auto text-xs font-normal text-muted-foreground">
-                    generated automatically
-                  </span>
-                  <ChevronDownIcon
-                    className={
-                      showYaml
-                        ? "size-4 rotate-180 transition-transform"
-                        : "size-4 transition-transform"
-                    }
-                  />
-                </button>
-                {showYaml ? (
-                  <div className="border-t">
-                    <div className="border-b bg-muted/30 px-3 py-1.5">
-                      <span className="text-xs text-muted-foreground">
-                        This block is written into your audit.md.
-                      </span>
-                    </div>
-                    <pre className="max-h-80 w-full max-w-full overflow-auto p-3 font-mono text-xs leading-relaxed">
-                      {yaml}
-                    </pre>
-                  </div>
-                ) : null}
-              </div>
 
               <Separator />
 
