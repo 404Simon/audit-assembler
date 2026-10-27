@@ -1,6 +1,7 @@
 import {
   FINDING_CATEGORIES,
   isCodeFile,
+  isScriptOutput,
   isUrl,
   type AuditState,
   type Finding,
@@ -54,6 +55,21 @@ function issue(
   }
 }
 
+const ISO_DATE =
+  /^\d{4}-\d{2}-\d{2}(?:[T ]\d{2}:\d{2}(?::\d{2}(?:\.\d+)?)?(?:Z|[+-]\d{2}:\d{2})?)?$/
+
+function isIsoDate(value: string): boolean {
+  if (!ISO_DATE.test(value)) return false
+  const datePart = value.slice(0, 10)
+  const date = new Date(`${datePart}T00:00:00Z`)
+  if (
+    Number.isNaN(date.valueOf()) ||
+    date.toISOString().slice(0, 10) !== datePart
+  )
+    return false
+  return !Number.isNaN(Date.parse(value.replace(" ", "T")))
+}
+
 export function validatorComplete(finding: Finding): boolean {
   return (
     finding.validator.quoteMatch &&
@@ -72,11 +88,11 @@ export function validateFinding(finding: Finding, audit: AuditState): Issue[] {
   if (!id) add("error", "Finding ID is required.")
   else {
     if (id.length > 40)
-      add("warning", "Finding ID is longer than 40 characters.")
-    if (!/^[a-z0-9][a-z0-9-]*$/.test(id))
+      add("error", "Finding ID must be at most 40 characters.")
+    if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(id))
       add(
-        "warning",
-        "Finding ID should be lowercase kebab-case (a-z, 0-9, dashes)."
+        "error",
+        "Finding ID must be a lowercase kebab-case slug (a-z, 0-9, single dashes)."
       )
     const duplicates = audit.findings.filter((other) => other.id.trim() === id)
     if (duplicates.length > 1)
@@ -108,8 +124,25 @@ export function validateFinding(finding: Finding, audit: AuditState): Issue[] {
     }
   }
 
-  if (isUrl(finding.file) && !finding.urlRetrievedAt.trim())
-    add("error", "URL evidence needs the date you accessed it.")
+  if (isScriptOutput(finding.file)) {
+    if (!finding.csvRow.trim())
+      add(
+        "error",
+        "Output row is required when the evidence is an out/*.csv file."
+      )
+    else if (!/^\d+$/.test(finding.csvRow.trim()))
+      add("error", "Output row must be a non-negative integer.")
+  }
+
+  if (isUrl(finding.file)) {
+    if (!finding.urlRetrievedAt.trim())
+      add("error", "URL evidence needs the date you accessed it.")
+    else if (!isIsoDate(finding.urlRetrievedAt.trim()))
+      add(
+        "error",
+        "URL retrieval date must be an ISO 8601 date, e.g. 2026-10-20."
+      )
+  }
   if (
     finding.file.trim().toLowerCase().endsWith(".pdf") &&
     !finding.paperRef.trim()

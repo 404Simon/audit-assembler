@@ -29,6 +29,8 @@ const FIELD_TITLES: Partial<Record<ExampleField, string>> = {
   "trace.artefact": "Paper artefacts",
   "trace.location": "Repository locations",
   "trace.computed": "Computed values",
+  "trace.matchesNote": "Match details",
+  "trace.statusNote": "Status details",
   "takeaway.text": "Take-aways",
   "fineItem.text": "Things that look fine",
   "question.text": "Open questions",

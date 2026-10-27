@@ -83,6 +83,8 @@ export function StatusBadge({
 
 const TRACE_CLASSES: Record<TraceStatus, string> = {
   Verified: "border-severity-low/30 bg-severity-low/10 text-severity-low",
+  Partial:
+    "border-severity-medium/30 bg-severity-medium/10 text-severity-medium",
   Mismatch: "border-severity-high/30 bg-severity-high/10 text-severity-high",
   Missing: "border-cat-missing/30 bg-cat-missing/10 text-cat-missing",
   "Not checked": "border-border text-muted-foreground",

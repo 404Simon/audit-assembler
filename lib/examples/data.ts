@@ -110,6 +110,13 @@ export interface TraceExample {
   source: ExampleSource
 }
 
+export interface TraceDetailExample {
+  id: string
+  text: string
+  context: string
+  source: ExampleSource
+}
+
 function source(audit: string, paper: string): ExampleSource {
   return { audit, paper, venue: "NeurIPS 2025" }
 }
@@ -247,6 +254,93 @@ export const TRACE_EXAMPLES: TraceExample[] = [
     source: source(
       "760",
       "Mesh Interpolation Graph Network for Dynamic and Spatially Irregular Global Weather Forecasting"
+    ),
+  },
+]
+
+export const TRACE_MATCH_DETAIL_EXAMPLES: TraceDetailExample[] = [
+  {
+    id: "match-543-1",
+    text: "arithmetic only",
+    context: "Table 1 math pass@1 — exports as `✓ (arithmetic only)`",
+    source: source(
+      "543",
+      "ProRL: Prolonged Reinforcement Learning Expands Reasoning Boundaries in Large Language Models"
+    ),
+  },
+  {
+    id: "match-543-2",
+    text: "4 of 5",
+    context: "Intro percentages — exports as `✗ (4 of 5)`",
+    source: source(
+      "543",
+      "ProRL: Prolonged Reinforcement Learning Expands Reasoning Boundaries in Large Language Models"
+    ),
+  },
+  {
+    id: "match-205-1",
+    text: "order of magnitude",
+    context: "Table 1, Electricity/MLP — exports as `~ (order of magnitude)`",
+    source: source(
+      "205",
+      "Improving Perturbation-based Explanations by Understanding the Role of Uncertainty Calibration"
+    ),
+  },
+  {
+    id: "match-585-1",
+    text: "procedure",
+    context: "Eq. (4) layer selection — exports as `✓ (procedure)`",
+    source: source(
+      "585",
+      "ReplaceMe: Network Simplification via Depth Pruning and Transformer Block Linearization"
+    ),
+  },
+]
+
+export const TRACE_STATUS_DETAIL_EXAMPLES: TraceDetailExample[] = [
+  {
+    id: "status-543-1",
+    text: "no eval code",
+    context: "Table 1 math pass@1 — exports as `Missing (no eval code)`",
+    source: source(
+      "543",
+      "ProRL: Prolonged Reinforcement Learning Expands Reasoning Boundaries in Large Language Models"
+    ),
+  },
+  {
+    id: "status-54-1",
+    text: "→ hdd-mtld-not-implemented",
+    context: "Table 2 HDD — exports as `Missing (→ hdd-mtld-not-implemented)`",
+    source: source(
+      "54",
+      "EVOREFUSE: Evolutionary Prompt Optimization for Evaluation and Mitigation of LLM Over-Refusal to Pseudo-Malicious Instructions"
+    ),
+  },
+  {
+    id: "status-54-2",
+    text: "computation present",
+    context: "Table 2 MSTTR — exports as `Verified (computation present)`",
+    source: source(
+      "54",
+      "EVOREFUSE: Evolutionary Prompt Optimization for Evaluation and Mitigation of LLM Over-Refusal to Pseudo-Malicious Instructions"
+    ),
+  },
+  {
+    id: "status-585-1",
+    text: "see note on `min_distance_layer`, finding `min-distance-layer-ignored`",
+    context: "Eq. (4) layer selection — exports as `Verified (...)`",
+    source: source(
+      "585",
+      "ReplaceMe: Network Simplification via Depth Pruning and Transformer Block Linearization"
+    ),
+  },
+  {
+    id: "status-654-1",
+    text: "metric",
+    context: "Table 1 average ranking changes — exports as `Mismatch (metric)`",
+    source: source(
+      "654",
+      "Unveiling Transformer Perception by Exploring Input Manifolds"
     ),
   },
 ]
@@ -425,6 +519,8 @@ export type ExampleField =
   | "trace.artefact"
   | "trace.location"
   | "trace.computed"
+  | "trace.matchesNote"
+  | "trace.statusNote"
   | "takeaway.text"
   | "fineItem.text"
   | "question.text"
@@ -567,6 +663,30 @@ export function examplesForField(field: ExampleField): SnippetGroup[] {
               context: example.artefact,
             })
           ),
+        },
+      ]
+    case "trace.matchesNote":
+      return [
+        {
+          title: "Match details",
+          items: TRACE_MATCH_DETAIL_EXAMPLES.map((example) => ({
+            id: example.id,
+            text: example.text,
+            source: example.source,
+            context: example.context,
+          })),
+        },
+      ]
+    case "trace.statusNote":
+      return [
+        {
+          title: "Status details",
+          items: TRACE_STATUS_DETAIL_EXAMPLES.map((example) => ({
+            id: example.id,
+            text: example.text,
+            source: example.source,
+            context: example.context,
+          })),
         },
       ]
     case "takeaway.text":

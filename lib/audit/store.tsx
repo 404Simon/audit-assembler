@@ -154,12 +154,18 @@ function normalizeFinding(value: unknown): Finding | null {
 
 function normalizeTraceRow(value: unknown): TraceRow | null {
   if (!isRecord(value)) return null
-  const status = ["Verified", "Mismatch", "Missing", "Not checked"].includes(
-    String(value.status)
-  )
+  const status = [
+    "Verified",
+    "Partial",
+    "Mismatch",
+    "Missing",
+    "Not checked",
+  ].includes(String(value.status))
     ? (value.status as TraceStatus)
     : "Not checked"
-  const matches = ["yes", "no", "none"].includes(String(value.matches))
+  const matches = ["yes", "no", "partial", "none"].includes(
+    String(value.matches)
+  )
     ? (value.matches as MatchMark)
     : "none"
   return {
@@ -168,8 +174,16 @@ function normalizeTraceRow(value: unknown): TraceRow | null {
     location: readString(value, "location"),
     computed: readString(value, "computed"),
     matches,
+    matchesNote: readString(value, "matchesNote"),
     status,
+    statusNote: readString(value, "statusNote"),
   }
+}
+
+function withSlugSuffix(base: string, suffix: string): string {
+  const tail = `-${suffix}`
+  const head = base.slice(0, Math.max(0, 40 - tail.length)).replace(/-+$/, "")
+  return `${head || "finding"}${tail}`
 }
 
 function dedupeById<T extends { id: string }>(items: T[]): T[] {
@@ -545,7 +559,9 @@ export function AuditProvider({ children }: { children: React.ReactNode }) {
               location: "",
               computed: "",
               matches: "none",
+              matchesNote: "",
               status: "Not checked",
+              statusNote: "",
             },
           ],
         }))
@@ -592,7 +608,7 @@ export function AuditProvider({ children }: { children: React.ReactNode }) {
             let candidate = base || ""
             let suffix = 2
             while (candidate && taken.has(candidate)) {
-              candidate = `${base.slice(0, 37)}-${suffix}`
+              candidate = withSlugSuffix(base, String(suffix))
               suffix += 1
             }
             nextPatch = { ...patch, id: candidate }
@@ -620,11 +636,11 @@ export function AuditProvider({ children }: { children: React.ReactNode }) {
         if (!source) return null
         const nextKey = uid("finding")
         const base = source.id || slugify(source.title) || "finding"
-        let candidate = `${base.slice(0, 34)}-copy`
+        let candidate = withSlugSuffix(base, "copy")
         let suffix = 2
         const taken = new Set(audit.findings.map((finding) => finding.id))
         while (taken.has(candidate)) {
-          candidate = `${base.slice(0, 31)}-copy-${suffix}`
+          candidate = withSlugSuffix(base, `copy-${suffix}`)
           suffix += 1
         }
         const copy: Finding = {

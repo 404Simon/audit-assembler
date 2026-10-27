@@ -128,7 +128,9 @@ export default function GuidePage() {
                   <CardTitle>You send</CardTitle>
                 </CardHeader>
                 <CardContent className="text-sm leading-relaxed text-muted-foreground">
-                  <code>audit.md</code> from the editor (on this webpage), plus scripts and outputs you wrote in a <code>checks/</code> folder. Submission details will be on StudOn.
+                  <code>audit.md</code> from the editor (on this webpage), plus
+                  scripts and outputs you wrote in a <code>checks/</code>{" "}
+                  folder. Submission details will be on StudOn.
                 </CardContent>
               </Card>
             </div>
@@ -266,7 +268,13 @@ export default function GuidePage() {
                 </li>
                 <li>
                   Compare with the paper and record <em>Verified</em>,{" "}
-                  <em>Mismatch</em>, <em>Missing</em> or <em>Not checked</em>.
+                  <em>Partial</em>, <em>Mismatch</em>, <em>Missing</em> or{" "}
+                  <em>Not checked</em>.
+                </li>
+                <li>
+                  Use the match and status detail fields for the agent-style
+                  nuance, e.g. <code>✗ (R and P)</code> or{" "}
+                  <code>Mismatch (→ finding-id)</code>.
                 </li>
                 <li>
                   A <em>Missing</em> row becomes a <code>missing</code> finding;

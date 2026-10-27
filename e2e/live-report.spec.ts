@@ -182,7 +182,14 @@ test("files, exports, resets, imports and re-exports a complete audit", async ({
     .locator('[aria-label="Matches paper"]')
     .getByRole("button", { name: "✗ no" })
     .click()
-  await choose(page, traceCard.getByLabel("Traceability status"), "Mismatch")
+  await choose(
+    page,
+    traceCard.getByRole("combobox", {
+      name: "Traceability status",
+      exact: true,
+    }),
+    "Mismatch"
+  )
 
   // Section 5: one complete finding.
   await openSection(page, "Findings")

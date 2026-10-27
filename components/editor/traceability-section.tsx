@@ -65,11 +65,13 @@ export function TraceabilitySection({
                   <span>
                     {status === "Verified"
                       ? "reproduced and matches"
-                      : status === "Mismatch"
-                        ? "reproduced, differs"
-                        : status === "Missing"
-                          ? "no producer"
-                          : "not reached"}
+                      : status === "Partial"
+                        ? "reproduced, partly matches"
+                        : status === "Mismatch"
+                          ? "reproduced, differs"
+                          : status === "Missing"
+                            ? "no producer"
+                            : "not reached"}
                   </span>
                 </div>
               ))}
@@ -225,6 +227,12 @@ export function TraceabilitySection({
                               "aria-pressed:bg-severity-high/10 aria-pressed:text-severity-high",
                           },
                           {
+                            value: "partial",
+                            label: MATCH_LABELS.partial,
+                            activeClassName:
+                              "aria-pressed:bg-severity-medium/10 aria-pressed:text-severity-medium",
+                          },
+                          {
                             value: "none",
                             label: MATCH_LABELS.none,
                             activeClassName:
@@ -248,6 +256,44 @@ export function TraceabilitySection({
                           value: status,
                           label: status,
                         }))}
+                      />
+                    </FormField>
+                  </div>
+
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <FormField
+                      label="Match detail"
+                      optional
+                      exampleField="trace.matchesNote"
+                      hint="Exported after the symbol, e.g. `✗ (R and P)`."
+                    >
+                      <Input
+                        value={row.matchesNote}
+                        placeholder="e.g. R and P"
+                        aria-label="Matches paper detail"
+                        onChange={(event) =>
+                          updateTraceRow(row.id, {
+                            matchesNote: event.target.value,
+                          })
+                        }
+                      />
+                    </FormField>
+
+                    <FormField
+                      label="Status detail"
+                      optional
+                      exampleField="trace.statusNote"
+                      hint="Exported after the status, e.g. `Mismatch (→ finding-id)`."
+                    >
+                      <Input
+                        value={row.statusNote}
+                        placeholder="e.g. → finding-id"
+                        aria-label="Traceability status detail"
+                        onChange={(event) =>
+                          updateTraceRow(row.id, {
+                            statusNote: event.target.value,
+                          })
+                        }
                       />
                     </FormField>
                   </div>

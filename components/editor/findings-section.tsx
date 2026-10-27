@@ -62,6 +62,7 @@ import {
   SEVERITIES,
   VALIDATOR_FIELDS,
   isCodeFile,
+  isScriptOutput,
   isUrl,
   type Finding,
   type FindingCategory,
@@ -316,6 +317,7 @@ function FindingCard({
     ? issues.filter((issue) => issue.level === "warning")
     : []
   const codeFile = isCodeFile(finding.file)
+  const scriptOutput = isScriptOutput(finding.file)
   const urlFile = isUrl(finding.file)
 
   const update = (patch: Partial<Finding>) => updateFinding(finding.key, patch)
@@ -545,7 +547,7 @@ function FindingCard({
                       id={`file-${finding.key}`}
                       label="File / PDF / URL"
                       exampleField="finding.file"
-                      hint="Repository-relative path, paper.pdf, an output file, or a URL."
+                      hint="Repository-relative path, paper.pdf, an out/*.csv output file, or a URL."
                     >
                       <Input
                         id={`file-${finding.key}`}
@@ -564,7 +566,9 @@ function FindingCard({
                       hint={
                         codeFile
                           ? "Required for code, unless you cite an output row."
-                          : "Code only."
+                          : scriptOutput
+                            ? "Not needed for out/*.csv evidence; cite the output row instead."
+                            : "Code only."
                       }
                     >
                       <Input
@@ -671,7 +675,7 @@ function FindingCard({
                       id={`csv-row-${finding.key}`}
                       label="Output row"
                       optional
-                      hint="The row in the script output that supports this finding."
+                      hint="Required for out/*.csv evidence: the 0-based row index."
                     >
                       <Input
                         id={`csv-row-${finding.key}`}

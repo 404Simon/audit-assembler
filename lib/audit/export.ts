@@ -112,12 +112,18 @@ function slugFallback(title: string, category: FindingCategory): string {
 }
 
 function traceRowLine(row: TraceRow): string {
+  const matches = row.matchesNote.trim()
+    ? `${MATCH_SYMBOLS[row.matches]} (${row.matchesNote.trim()})`
+    : MATCH_SYMBOLS[row.matches]
+  const status = row.statusNote.trim()
+    ? `${row.status} (${row.statusNote.trim()})`
+    : row.status
   return [
     tableCell(row.artefact),
     row.location.trim() ? tableCell(inlineCode(row.location)) : "",
     tableCell(row.computed),
-    MATCH_SYMBOLS[row.matches],
-    tableCell(row.status),
+    tableCell(matches),
+    tableCell(status),
   ].join(" | ")
 }
 

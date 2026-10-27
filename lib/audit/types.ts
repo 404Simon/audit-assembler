@@ -18,24 +18,27 @@ export type FindingStatus = (typeof FINDING_STATUSES)[number]
 
 export const TRACE_STATUSES = [
   "Verified",
+  "Partial",
   "Mismatch",
   "Missing",
   "Not checked",
 ] as const
 export type TraceStatus = (typeof TRACE_STATUSES)[number]
 
-export const MATCH_MARKS = ["yes", "no", "none"] as const
+export const MATCH_MARKS = ["yes", "no", "partial", "none"] as const
 export type MatchMark = (typeof MATCH_MARKS)[number]
 
 export const MATCH_LABELS: Record<MatchMark, string> = {
   yes: "✓ yes",
   no: "✗ no",
+  partial: "~ partial",
   none: "— n/a",
 }
 
 export const MATCH_SYMBOLS: Record<MatchMark, string> = {
   yes: "✓",
   no: "✗",
+  partial: "~",
   none: "—",
 }
 
@@ -151,7 +154,11 @@ export interface TraceRow {
   location: string
   computed: string
   matches: MatchMark
+  /** Optional wording appended to the match cell, e.g. "R and P". */
+  matchesNote: string
   status: TraceStatus
+  /** Optional wording appended to the status cell, e.g. "→ finding-id". */
+  statusNote: string
 }
 
 export const VALIDATOR_FIELDS = [
@@ -333,11 +340,17 @@ export function findingScore(finding: Finding): number {
   )
 }
 
+export function isScriptOutput(file: string): boolean {
+  const f = file.trim().toLowerCase()
+  return f.startsWith("out/") && f.endsWith(".csv")
+}
+
 export function isCodeFile(file: string): boolean {
   const f = file.trim().toLowerCase()
   if (!f) return false
   if (f.startsWith("http://") || f.startsWith("https://")) return false
   if (f.endsWith(".pdf")) return false
+  if (isScriptOutput(f)) return false
   return true
 }
 
