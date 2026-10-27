@@ -13,7 +13,7 @@ Built with Next.js 16 (static export), React 19, Tailwind CSS v4 and shadcn/ui o
 | ----------- | ----------------------------------------------------------------------------------------------- |
 | `/`         | The six-step review guide, finding categories, writing and submission guidance, Q&A, checklist. |
 | `/editor`   | The form-based audit editor with live validation, YAML preview and export.                      |
-| `/examples` | Worked findings, summaries and traceability tables from held-out NeurIPS 2025 agent audits.     |
+| `/examples` | Three complete reports plus worked findings, summaries and traceability tables from held-out NeurIPS 2025 agent audits. |
 
 The editor is one audit per browser. Sections deep-link through the hash, e.g.
 `/editor#findings` or `/editor#export`.
@@ -102,6 +102,7 @@ PAGES_BASE_PATH=/audit-assembler pnpm build
 - Guide copy lives in `app/page.tsx`; checklist text and step IDs are in `lib/guide.ts`.
 - The editor field layout lives in `components/editor/`.
 - Report/YAML generation is in `lib/audit/export.ts`; validation in `lib/audit/validation.ts`.
-- Examples are curated in `lib/examples/data.ts` from agent audits of NeurIPS 2025 papers under
-  `review-agent/runs/reviews/*-nips16`. **No ISMB audit is used as an example**, so the material
-  cannot bias a reviewer's comparison with the agent's findings.
+- Curated snippets live in `lib/examples/data.ts`; three complete example reports live in
+  `lib/examples/reports.json`. Both draw on agent audits of NeurIPS 2025 papers under
+  `review-agent/runs/reviews/*-nips16` and `*-r16`. **No ISMB audit is used as an example**, so the
+  material cannot bias a reviewer's comparison with the agent's findings.

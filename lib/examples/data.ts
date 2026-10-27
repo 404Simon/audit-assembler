@@ -85,6 +85,19 @@ export const SUMMARY_EXAMPLES: SummaryExample[] = [
       venue: "NeurIPS 2025",
     },
   },
+  {
+    id: "1829",
+    whatIDid:
+      "I read the paper (including appendices A-M), parsed all 123 shell drivers and 45 Python files, and ran deterministic checks on asset existence, Q-matrix regeneration, dataset statistics, hyper-parameters and appendix-driver coverage. I also executed the release: a direct forward pass of model/OLinear.py and a two-pass run.py smoke run — a pristine CPU install under requirements.txt, which crashes, then a scratch copy with np.Inf changed to np.inf, which trains one epoch and evaluates on the shipped Weather data.",
+    headline:
+      "The core OLinear method is implemented and sound, and the pre-computed transforms are reproducible and free of test-set leakage; but a fresh install crashes before the first epoch, more than half of the 24 datasets and all of their Q matrices are absent, and three headline experiment families — the plug-in tables, OLinear-C for 8 of 9 datasets, and most ablation rows — have no runnable code.",
+    source: {
+      audit: "1829",
+      paper:
+        "OLinear: A Linear Model for Time Series Forecasting in Orthogonally Transformed Domain",
+      venue: "NeurIPS 2025",
+    },
+  },
 ]
 
 export interface TraceExample {
@@ -173,6 +186,55 @@ export const TRACE_EXAMPLES: TraceExample[] = [
     source: source(
       "768",
       "A High-Dimensional Statistical Method for Optimizing Transfer Quantities in Multi-Source Transfer Learning"
+    ),
+  },
+  {
+    id: "trace-54-1",
+    artefact: "Table 2 MSTTR (window 800)",
+    location: "metric/lexical.py:33-34",
+    computed: "MSTTR computed as described",
+    matches: "yes",
+    status: "Verified",
+    source: source(
+      "54",
+      "EVOREFUSE: Evolutionary Prompt Optimization for Evaluation and Mitigation of LLM Over-Refusal to Pseudo-Malicious Instructions"
+    ),
+  },
+  {
+    id: "trace-654-1",
+    artefact: "Table 1 average ranking changes, CIFAR10 SiMExp eta=10 = 18.70",
+    location: "notebooks/plots_and_tables.ipynb:613",
+    computed:
+      "argsort position differences // 2; 5 of 24 permutations agree with true inversions",
+    matches: "no",
+    status: "Mismatch",
+    source: source(
+      "654",
+      "Unveiling Transformer Perception by Exploring Input Manifolds"
+    ),
+  },
+  {
+    id: "trace-1829-1",
+    artefact: "All 84 shipped Q matrices (Fig. 2 / Fig. 7 transforms)",
+    location: "_audit_code/check_qmat_all.py",
+    computed: "reproduced from the first `ratio` fraction, max |Δ| ≤ 3e-9",
+    matches: "yes",
+    status: "Verified",
+    source: source(
+      "1829",
+      "OLinear: A Linear Model for Time Series Forecasting in Orthogonally Transformed Domain"
+    ),
+  },
+  {
+    id: "trace-1829-2",
+    artefact: "Tables 5, 9 and 10 — plug-in results",
+    location: "(none)",
+    computed: "—",
+    matches: "none",
+    status: "Missing",
+    source: source(
+      "1829",
+      "OLinear: A Linear Model for Time Series Forecasting in Orthogonally Transformed Domain"
     ),
   },
   {
@@ -376,6 +438,9 @@ function findingSnippets(
 ): Array<{ id: string; text: string; source: ExampleSource; context: string }> {
   const preferred = [
     "205:no-tabular-results-pipeline",
+    "654:algo-both-type-mismatch",
+    "54:prr-substring-not-prefix",
+    "1829:plugin-experiments-absent",
     "376:hardcoded-data-path",
     "646:lr-optimizer-mismatch",
     "543:rg-val-equals-test",

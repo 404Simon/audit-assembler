@@ -9,7 +9,7 @@ import {
   SparklesIcon,
 } from "lucide-react"
 
-import { CopyButton } from "@/components/audit/copy-button"
+import { ReportBrowser } from "@/components/examples/report-examples"
 import {
   CategoryBadge,
   SeverityBadge,
@@ -57,7 +57,6 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { buildFindingYaml } from "@/lib/audit/export"
 import {
   CATEGORY_INFO,
   FINDING_CATEGORIES,
@@ -75,6 +74,7 @@ import {
   TRACE_EXAMPLES,
   type FindingExample,
 } from "@/lib/examples/data"
+import { REPORT_EXAMPLES } from "@/lib/examples/reports"
 import { cn } from "cn"
 
 type CategoryFilter = "all" | FindingCategory
@@ -121,9 +121,9 @@ export function ExamplesBrowser() {
             What a strong audit looks like
           </h1>
           <p className="text-base leading-relaxed text-muted-foreground">
-            Full findings, summaries and traceability tables from held-out
-            NeurIPS 2025 audits. Use them to calibrate the level of evidence,
-            not as text to reuse.
+            Three complete reports plus worked findings, summaries and
+            traceability tables from held-out NeurIPS 2025 audits. Use them to
+            calibrate the level of evidence, not as text to reuse.
           </p>
         </div>
         <Alert className="max-w-3xl">
@@ -138,8 +138,12 @@ export function ExamplesBrowser() {
         </Alert>
       </header>
 
-      <Tabs defaultValue="findings" className="gap-5">
-        <TabsList>
+      <Tabs defaultValue="reports" className="gap-5">
+        <TabsList className="max-w-full justify-start max-sm:h-auto max-sm:w-full max-sm:flex-wrap max-sm:[&>[data-slot=tabs-trigger]]:flex-none">
+          <TabsTrigger value="reports">
+            Full reports
+            <Badge variant="secondary">{REPORT_EXAMPLES.length}</Badge>
+          </TabsTrigger>
           <TabsTrigger value="findings">
             Findings
             <Badge variant="secondary">{FINDING_EXAMPLES.length}</Badge>
@@ -148,6 +152,10 @@ export function ExamplesBrowser() {
           <TabsTrigger value="traceability">Traceability</TabsTrigger>
           <TabsTrigger value="synthesis">Synthesis</TabsTrigger>
         </TabsList>
+
+        <TabsContent value="reports">
+          <ReportBrowser />
+        </TabsContent>
 
         <TabsContent value="findings" className="flex flex-col gap-5">
           <div className="flex flex-col gap-3 rounded-xl border bg-card p-3 lg:flex-row lg:items-center lg:justify-between">
@@ -297,22 +305,16 @@ export function ExamplesBrowser() {
               </CardHeader>
               <CardContent className="flex flex-col gap-5">
                 <div className="flex flex-col gap-1.5">
-                  <div className="flex items-center justify-between gap-2">
-                    <h3 className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
-                      What I did
-                    </h3>
-                    <CopyButton value={example.whatIDid} />
-                  </div>
+                  <h3 className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
+                    What I did
+                  </h3>
                   <p className="text-sm leading-relaxed">{example.whatIDid}</p>
                 </div>
                 <Separator />
                 <div className="flex flex-col gap-1.5">
-                  <div className="flex items-center justify-between gap-2">
-                    <h3 className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
-                      Headline
-                    </h3>
-                    <CopyButton value={example.headline} />
-                  </div>
+                  <h3 className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
+                    Headline
+                  </h3>
                   <p className="text-sm leading-relaxed">{example.headline}</p>
                 </div>
               </CardContent>
@@ -327,63 +329,65 @@ export function ExamplesBrowser() {
             says what that means. A row marked <em>Not checked</em> is honest,
             not a failure.
           </p>
-          {["205", "376", "768", "760"].map((audit) => {
-            const rows = TRACE_EXAMPLES.filter(
-              (row) => row.source.audit === audit
-            )
-            if (rows.length === 0) return null
-            const first = rows[0]
-            return (
-              <Card key={audit}>
-                <CardHeader>
-                  <CardTitle className="text-base">
-                    {first.source.paper}
-                  </CardTitle>
-                  <CardDescription>
-                    {first.source.venue} · audit {audit}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <Table className="[&_td]:whitespace-normal [&_th]:whitespace-normal">
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Paper artefact</TableHead>
-                        <TableHead>Repo location</TableHead>
-                        <TableHead>Computed</TableHead>
-                        <TableHead>Matches</TableHead>
-                        <TableHead>Status</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {rows.map((row) => (
-                        <TableRow key={row.id}>
-                          <TableCell className="align-top text-sm">
-                            {row.artefact}
-                          </TableCell>
-                          <TableCell className="align-top font-mono text-xs">
-                            {row.location}
-                          </TableCell>
-                          <TableCell className="align-top text-sm">
-                            {row.computed}
-                          </TableCell>
-                          <TableCell className="align-top">
-                            {row.matches === "yes"
-                              ? "✓"
-                              : row.matches === "no"
-                                ? "✗"
-                                : "—"}
-                          </TableCell>
-                          <TableCell className="align-top">
-                            <TraceStatusBadge status={row.status} />
-                          </TableCell>
+          {[...new Set(TRACE_EXAMPLES.map((row) => row.source.audit))].map(
+            (audit) => {
+              const rows = TRACE_EXAMPLES.filter(
+                (row) => row.source.audit === audit
+              )
+              if (rows.length === 0) return null
+              const first = rows[0]
+              return (
+                <Card key={audit}>
+                  <CardHeader>
+                    <CardTitle className="text-base">
+                      {first.source.paper}
+                    </CardTitle>
+                    <CardDescription>
+                      {first.source.venue} · audit {audit}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <Table className="[&_td]:whitespace-normal [&_th]:whitespace-normal">
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Paper artefact</TableHead>
+                          <TableHead>Repo location</TableHead>
+                          <TableHead>Computed</TableHead>
+                          <TableHead>Matches</TableHead>
+                          <TableHead>Status</TableHead>
                         </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </CardContent>
-              </Card>
-            )
-          })}
+                      </TableHeader>
+                      <TableBody>
+                        {rows.map((row) => (
+                          <TableRow key={row.id}>
+                            <TableCell className="align-top text-sm">
+                              {row.artefact}
+                            </TableCell>
+                            <TableCell className="align-top font-mono text-xs">
+                              {row.location}
+                            </TableCell>
+                            <TableCell className="align-top text-sm">
+                              {row.computed}
+                            </TableCell>
+                            <TableCell className="align-top">
+                              {row.matches === "yes"
+                                ? "✓"
+                                : row.matches === "no"
+                                  ? "✗"
+                                  : "—"}
+                            </TableCell>
+                            <TableCell className="align-top">
+                              <TraceStatusBadge status={row.status} />
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </CardContent>
+                </Card>
+              )
+            }
+          )}
         </TabsContent>
 
         <TabsContent value="synthesis" className="flex flex-col gap-6">
@@ -522,8 +526,6 @@ function FindingDialog({
 }) {
   if (!finding) return null
 
-  const yaml = buildFindingYaml(finding)
-
   return (
     <Dialog open={true} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="max-h-[88vh] overflow-x-hidden overflow-y-auto sm:max-w-3xl">
@@ -576,12 +578,9 @@ function FindingDialog({
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <div className="flex items-center justify-between gap-2">
-              <h3 className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
-                Quote
-              </h3>
-              <CopyButton value={finding.quote} />
-            </div>
+            <h3 className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
+              Quote
+            </h3>
             <pre className="max-h-64 w-full max-w-full overflow-auto rounded-lg border bg-muted/40 p-3 font-mono text-xs leading-relaxed">
               {finding.quote}
             </pre>
@@ -595,27 +594,12 @@ function FindingDialog({
             ] as const
           ).map(([label, text]) => (
             <div key={label} className="flex flex-col gap-1.5">
-              <div className="flex items-center justify-between gap-2">
-                <h3 className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
-                  {label}
-                </h3>
-                <CopyButton value={text} />
-              </div>
+              <h3 className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
+                {label}
+              </h3>
               <p className="text-sm leading-relaxed">{text}</p>
             </div>
           ))}
-
-          <div className="flex flex-col gap-1.5">
-            <div className="flex items-center justify-between gap-2">
-              <h3 className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
-                Generated YAML
-              </h3>
-              <CopyButton value={yaml} label="Copy YAML" />
-            </div>
-            <pre className="max-h-80 w-full max-w-full overflow-auto rounded-lg border bg-muted/40 p-3 font-mono text-xs leading-relaxed">
-              {yaml}
-            </pre>
-          </div>
         </div>
       </DialogContent>
     </Dialog>
