@@ -9,10 +9,10 @@ Built with Next.js 16 (static export), React 19, Tailwind CSS v4 and shadcn/ui o
 
 ## Pages
 
-| Route       | What it is                                                                                      |
-| ----------- | ----------------------------------------------------------------------------------------------- |
-| `/`         | The six-step review guide, finding categories, writing and submission guidance, Q&A, checklist. |
-| `/editor`   | The form-based audit editor with live validation, YAML preview and export.                      |
+| Route       | What it is                                                                                                              |
+| ----------- | ----------------------------------------------------------------------------------------------------------------------- |
+| `/`         | The six-step review guide, finding categories, writing and submission guidance, Q&A, checklist.                         |
+| `/editor`   | The form-based audit editor with live validation, YAML preview and export.                                              |
 | `/examples` | Three complete reports plus worked findings, summaries and traceability tables from held-out NeurIPS 2025 agent audits. |
 
 The editor is one audit per browser. Sections deep-link through the hash, e.g.
@@ -76,6 +76,37 @@ pnpm dev        # http://localhost:3000
 pnpm typecheck
 pnpm lint
 pnpm build      # static export in out/
+```
+
+### Live end-to-end check
+
+`pnpm test:e2e` runs a fast schema contract test plus one live check that drives
+Chromium against the deployed site at
+`https://404simon.github.io/audit-assembler/`. On a fresh checkout, install the
+browser once with `pnpm exec playwright install chromium`.
+
+`e2e/report-schema.spec.ts` checks the generated YAML against the review-agent
+contract: code/PDF/URL/`out/*.csv` evidence, optional fields, finding IDs,
+validator flags, and the readiness errors that prevent an unparseable export.
+
+The live test:
+
+1. opens the guide and marks progress,
+2. fills a complete audit through the real editor (paper, effort, summary,
+   traceability row, a validated finding, take-away, fine item, open question),
+3. checks the readiness report and downloads `audit.md`,
+4. parses the generated YAML finding block and verifies the report content,
+5. downloads `audit-backup.json`,
+6. reloads to verify autosave, resets the audit, imports the backup through the
+   file picker, and checks that everything was restored,
+7. downloads `audit.md` again and requires it to be byte-for-byte identical,
+8. fails on page errors, HTTP errors and unexpected failed requests.
+
+It does not mock storage, downloads, imports or the network. Run it against a
+local build or preview with:
+
+```bash
+AUDIT_E2E_BASE_URL=http://localhost:3000/ pnpm test:e2e
 ```
 
 Preview the exported site with any static file server, e.g. `npx serve out`.
