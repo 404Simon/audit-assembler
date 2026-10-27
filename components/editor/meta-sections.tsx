@@ -70,12 +70,20 @@ export function MetaSection({
                 id="paper-id"
                 label="Paper ID"
                 error={error("paper id")}
-                hint="The identifier the study lead gave you."
+                hint={
+                  <>
+                    It is the last part of the DOI:{" "}
+                    <span className="font-mono">
+                      10.1093/bioinformatics/btag236
+                    </span>{" "}
+                    → <span className="font-mono">btag236</span>.
+                  </>
+                }
               >
                 <Input
                   id="paper-id"
                   value={meta.paperId}
-                  placeholder="e.g. 376"
+                  placeholder="e.g. btag236"
                   onChange={(event) => setMeta({ paperId: event.target.value })}
                   aria-invalid={Boolean(error("paper id"))}
                 />
@@ -83,9 +91,19 @@ export function MetaSection({
 
               <FormField
                 id="repo"
-                label="Repository / snapshot"
+                label="Repository and snapshot"
                 error={error("repository")}
-                hint="owner/repo plus the commit or snapshot you received."
+                hint={
+                  <>
+                    The code repository (
+                    <span className="font-mono">owner/repo</span>) and the
+                    commit hash of the version you audited, e.g.{" "}
+                    <span className="font-mono">
+                      tsinghua-fib-lab/SparseDiff @ 55d5b7b
+                    </span>
+                    .
+                  </>
+                }
               >
                 <Input
                   id="repo"

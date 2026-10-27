@@ -120,7 +120,7 @@ export default function GuidePage() {
                 </CardHeader>
                 <CardContent className="text-sm leading-relaxed text-muted-foreground">
                   The paper PDF, usually a text dump, the authors&apos;
-                  repository at a fixed snapshot, and this page.
+                  repository at a fixed snapshot (a git commit), and this page.
                 </CardContent>
               </Card>
               <Card size="sm">
@@ -242,8 +242,8 @@ export default function GuidePage() {
                   will verify them in the next step.
                 </li>
                 <li>
-                  Note the snapshot or commit. If the code changes while you
-                  work, stop and ask the study lead.
+                  Note the snapshot or commit hash, and put it in the paper
+                  header.
                 </li>
               </ul>
               <GuideStepToggle id="step-2" />
