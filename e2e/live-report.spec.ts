@@ -180,16 +180,45 @@ test("files, exports, resets, imports and re-exports a complete audit", async ({
   await traceCard.getByPlaceholder("e.g. 0.84").fill("0.84")
   await traceCard
     .locator('[aria-label="Matches paper"]')
-    .getByRole("button", { name: "✗ no" })
+    .getByRole("button", { name: "~ partial" })
     .click()
+  await traceCard.getByLabel("Matches paper detail").fill("R and P")
   await choose(
     page,
     traceCard.getByRole("combobox", {
       name: "Traceability status",
       exact: true,
     }),
-    "Mismatch"
+    "Partial"
   )
+  await traceCard
+    .getByLabel("Traceability status detail")
+    .fill("→ traceability-finding")
+
+  // Both new detail fields expose worked examples in the deployed form.
+  const matchField = page
+    .locator('[data-slot="field"]')
+    .filter({ hasText: "Match detail" })
+    .last()
+  await matchField.getByRole("button", { name: "Examples" }).click()
+  await expect(page.getByRole("dialog")).toContainText(
+    "Examples — Match details"
+  )
+  await expect(page.getByRole("dialog")).toContainText("arithmetic only")
+  await page.keyboard.press("Escape")
+
+  const statusField = page
+    .locator('[data-slot="field"]')
+    .filter({ hasText: "Status detail" })
+    .last()
+  await statusField.getByRole("button", { name: "Examples" }).click()
+  await expect(page.getByRole("dialog")).toContainText(
+    "Examples — Status details"
+  )
+  await expect(page.getByRole("dialog")).toContainText(
+    "→ hdd-mtld-not-implemented"
+  )
+  await page.keyboard.press("Escape")
 
   // Section 5: one complete finding.
   await openSection(page, "Findings")
@@ -307,7 +336,7 @@ test("files, exports, resets, imports and re-exports a complete audit", async ({
   expect(first.text).toContain(`| Repository / snapshot | \`${REPO}\` |`)
   expect(first.text).toContain(`| Reviewer | ${REVIEWER} |`)
   expect(first.text).toContain(
-    "| Table 1, AUROC = 0.91 | `eval.py:88` | 0.84 | ✗ | Mismatch |"
+    "| Table 1, AUROC = 0.91 | `eval.py:88` | 0.84 | ~ (R and P) | Partial (→ traceability-finding) |"
   )
   expect(first.text).not.toContain("REPLACE ME")
   expect(first.text).toContain(
